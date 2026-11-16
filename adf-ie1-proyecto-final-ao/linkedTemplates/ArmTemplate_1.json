@@ -462,6 +462,33 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/sink_temp')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "dataset_final_temp.csv",
+						"folderPath": "raw",
+						"container": "etl-data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pl_ingesta_mongodb')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1330,7 +1357,7 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "DelimitedText1",
+								"referenceName": "sink_temp",
 								"type": "DatasetReference"
 							},
 							"name": "sink1"
@@ -1345,6 +1372,18 @@
 						},
 						{
 							"name": "join2"
+						},
+						{
+							"name": "join3"
+						},
+						{
+							"name": "join4"
+						},
+						{
+							"name": "join5"
+						},
+						{
+							"name": "join6"
 						},
 						{
 							"name": "derivedColumn1"
@@ -1472,8 +1511,8 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> srcMisc",
-						"srcAmesproperty, srcAmesdbtemp join(srcAmesproperty@PID == srcAmesdbtemp@pid,",
-						"     joinType:'inner',",
+						"srcAmesdbtemp, srcAmesproperty join(srcAmesdbtemp@pid == srcAmesproperty@PID,",
+						"     joinType:'left',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join1",
@@ -1481,12 +1520,32 @@
 						"     total_bedrooms = sum(toInteger(bedrooms)),",
 						"          total_full_bath = sum(toInteger(full_bath)),",
 						"          total_half_bath = sum(toInteger(half_bath))) ~> aggFloorDetail",
-						"srcAmesdbtemp, aggFloorDetail join(srcAmesdbtemp@pid == aggFloorDetail@pid,",
-						"     joinType:'inner',",
+						"join1, aggFloorDetail join(srcAmesproperty@PID == aggFloorDetail@pid,",
+						"     joinType:'left',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join2",
-						"join2 derive(Gr_liv_area = toInteger(byName('1st Flr SF')) + toInteger(byName('2nd Flr SF')) + toInteger(byName('Low Qual Fin SF'))) ~> derivedColumn1",
+						"join2, srcGarage join(srcAmesproperty@PID == srcGarage@pid,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join3",
+						"join3, srcBsmt join(srcAmesproperty@PID == srcBsmt@pid,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join4",
+						"join4, srcPool join(srcAmesproperty@PID == srcPool@pid,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join5",
+						"join5, srcMisc join(srcAmesproperty@PID == srcMisc@pid,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join6",
+						"join6 derive(Gr_liv_area = toInteger(byName('1st Flr SF')) + toInteger(byName('2nd Flr SF')) + toInteger(byName('Low Qual Fin SF'))) ~> derivedColumn1",
 						"derivedColumn1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     skipDuplicateMapInputs: true,",
@@ -1499,7 +1558,8 @@
 				"[concat(variables('factoryId'), '/datasets/cp_garage_raw')]",
 				"[concat(variables('factoryId'), '/datasets/cp_bsmt_raw')]",
 				"[concat(variables('factoryId'), '/datasets/cp_pool_raw')]",
-				"[concat(variables('factoryId'), '/datasets/cp_misc_raw')]"
+				"[concat(variables('factoryId'), '/datasets/cp_misc_raw')]",
+				"[concat(variables('factoryId'), '/datasets/sink_temp')]"
 			]
 		}
 	]
