@@ -97,6 +97,9 @@
 				},
 				{
 					"name": "join7"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -233,7 +236,7 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     query: 'SELECT\\n    CAST(\"pid\" AS TEXT) AS pid,\\n    \"Sale Date\"         AS sale_date,\\n    \"Sale Type\"         AS sale_type,\\n    \"Sale Condition\"    AS sale_condition,\\n    \"saleprice\"         AS sale_price\\nFROM public.saleproperty',",
 				"     format: 'query') ~> srcSaleproperties",
-				"srcAmesproperty, srcAmesdbtemp join(srcAmesdbtemp@pid == srcAmesproperty@PID,",
+				"srcAmesproperty, derivedColumn1 join(srcAmesdbtemp@pid == srcAmesproperty@PID,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -267,13 +270,15 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join6",
-				"join7 derive(Gr_liv_area = toInteger(byName('first_flr_sf')) + toInteger(byName('second_flr_sf')) + toInteger(byName('low_qual_fin_sf'))) ~> derivedColumn1",
-				"join6, srcSaleproperties join(srcAmesproperty@PID == srcSaleproperties@pid,",
+				"srcAmesdbtemp derive(Gr_liv_area = toInteger(byName('first_flr_sf')) + toInteger(byName('second_flr_sf')) + toInteger(byName('low_qual_fin_sf'))) ~> derivedColumn1",
+				"join6, derivedColumn2 join(srcAmesproperty@PID == srcSaleproperties@pid,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join7",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"srcSaleproperties derive(MoSold = month(sale_date),",
+				"          YrSold = year(sale_date)) ~> derivedColumn2",
+				"join7 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> sink1"
