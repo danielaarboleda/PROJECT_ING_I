@@ -1352,6 +1352,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "srcMisc"
+						},
+						{
+							"dataset": {
+								"referenceName": "PostgreSQL_SaleProperties",
+								"type": "DatasetReference"
+							},
+							"name": "srcSaleproperties"
 						}
 					],
 					"sinks": [
@@ -1387,6 +1394,9 @@
 						},
 						{
 							"name": "derivedColumn1"
+						},
+						{
+							"name": "join7"
 						}
 					],
 					"scriptLines": [
@@ -1511,7 +1521,19 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> srcMisc",
-						"srcAmesdbtemp, srcAmesproperty join(srcAmesdbtemp@pid == srcAmesproperty@PID,",
+						"source(output(",
+						"          pid as string,",
+						"          sale_date as timestamp,",
+						"          sale_type as string,",
+						"          sale_condition as string,",
+						"          sale_price as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'SELECT\\n    CAST(\"pid\" AS TEXT) AS pid,\\n    \"Sale Date\"         AS sale_date,\\n    \"Sale Type\"         AS sale_type,\\n    \"Sale Condition\"    AS sale_condition,\\n    \"saleprice\"         AS sale_price\\nFROM public.saleproperty',",
+						"     format: 'query') ~> srcSaleproperties",
+						"srcAmesproperty, srcAmesdbtemp join(srcAmesdbtemp@pid == srcAmesproperty@PID,",
 						"     joinType:'left',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
@@ -1545,7 +1567,12 @@
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join6",
-						"join6 derive(Gr_liv_area = toInteger(byName('1st Flr SF')) + toInteger(byName('2nd Flr SF')) + toInteger(byName('Low Qual Fin SF'))) ~> derivedColumn1",
+						"join7 derive(Gr_liv_area = toInteger(byName('first_flr_sf')) + toInteger(byName('second_flr_sf')) + toInteger(byName('low_qual_fin_sf'))) ~> derivedColumn1",
+						"join6, srcSaleproperties join(srcAmesproperty@PID == srcSaleproperties@pid,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join7",
 						"derivedColumn1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     skipDuplicateMapInputs: true,",
