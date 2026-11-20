@@ -106,6 +106,9 @@
 				},
 				{
 					"name": "derivedColumn3"
+				},
+				{
+					"name": "union1"
 				}
 			],
 			"scriptLines": [
@@ -378,6 +381,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
 				"join7 derive(Gr_liv_area = coalesce(first_flr_sf, 0) + coalesce(second_flr_sf, 0) + coalesce(low_qual_fin_sf, 0)) ~> derivedColumn3",
+				"derivedColumn1 union(byName: true)~> union1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
