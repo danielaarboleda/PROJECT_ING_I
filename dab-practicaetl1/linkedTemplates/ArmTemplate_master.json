@@ -1,0 +1,118 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Nombre de instancia de Data Factory",
+			"defaultValue": "dab-practicaetl1"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"connectionString\"de \"AzureBlobStorage1\""
+		},
+		"AzurePostgreSql1_password": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"password\"de \"AzurePostgreSql1\""
+		},
+		"MongoConn_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"connectionString\"de \"MongoConn\""
+		},
+		"PostgreSQL_ProyectoFinal_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"connectionString\"de \"PostgreSQL_ProyectoFinal\""
+		},
+		"AzurePostgreSql1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "ep-super-fire-a8k4kvnt-pooler.eastus2.azure.neon.tech"
+		},
+		"AzurePostgreSql1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "neondb"
+		},
+		"AzurePostgreSql1_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "user_practica_etl1"
+		},
+		"MongoConn_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "test"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI de la cuenta de almacenamiento que contiene las plantillas de ARM vinculadas."
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Token de SAS para la cuenta de almacenamiento que contiene las plantillas de ARM vinculadas"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "dab-practicaetl1_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureBlobStorage1_connectionString": {
+						"value": "[parameters('AzureBlobStorage1_connectionString')]"
+					},
+					"AzurePostgreSql1_password": {
+						"value": "[parameters('AzurePostgreSql1_password')]"
+					},
+					"MongoConn_connectionString": {
+						"value": "[parameters('MongoConn_connectionString')]"
+					},
+					"PostgreSQL_ProyectoFinal_connectionString": {
+						"value": "[parameters('PostgreSQL_ProyectoFinal_connectionString')]"
+					},
+					"AzurePostgreSql1_properties_typeProperties_server": {
+						"value": "[parameters('AzurePostgreSql1_properties_typeProperties_server')]"
+					},
+					"AzurePostgreSql1_properties_typeProperties_database": {
+						"value": "[parameters('AzurePostgreSql1_properties_typeProperties_database')]"
+					},
+					"AzurePostgreSql1_properties_typeProperties_username": {
+						"value": "[parameters('AzurePostgreSql1_properties_typeProperties_username')]"
+					},
+					"MongoConn_properties_typeProperties_database": {
+						"value": "[parameters('MongoConn_properties_typeProperties_database')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "dab-practicaetl1_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'dab-practicaetl1_ArmTemplate_0')]"
+			]
+		}
+	]
+}

@@ -1,0 +1,1392 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Nombre de instancia de Data Factory",
+			"defaultValue": "dab-practicaetl1"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/cp_amesdbtemp_raw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "amesdbtemp.csv",
+						"folderPath": "raw",
+						"container": "etl-data"
+					},
+					"columnDelimiter": ";",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cp_bsmt_raw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "bsmt.csv",
+						"folderPath": "raw",
+						"container": "etl-data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "pid",
+						"type": "String"
+					},
+					{
+						"name": "bsmt_qual",
+						"type": "String"
+					},
+					{
+						"name": "bsmt_cond",
+						"type": "String"
+					},
+					{
+						"name": "bsmt_exposure",
+						"type": "String"
+					},
+					{
+						"name": "bsmtfin_type_1",
+						"type": "String"
+					},
+					{
+						"name": "bsmtfin_sf_1",
+						"type": "String"
+					},
+					{
+						"name": "bsmtfin_type_2",
+						"type": "String"
+					},
+					{
+						"name": "bsmtfin_sf_2",
+						"type": "String"
+					},
+					{
+						"name": "bsmt_unf_sf",
+						"type": "String"
+					},
+					{
+						"name": "total_bsmt_sf",
+						"type": "String"
+					},
+					{
+						"name": "bsmt_full_bath",
+						"type": "String"
+					},
+					{
+						"name": "bsmt_half_bath",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cp_floordetail_raw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "floordetail.csv",
+						"folderPath": "raw",
+						"container": "etl-data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "pid",
+						"type": "String"
+					},
+					{
+						"name": "Floor",
+						"type": "String"
+					},
+					{
+						"name": "bedrooms",
+						"type": "String"
+					},
+					{
+						"name": "Full Bath",
+						"type": "String"
+					},
+					{
+						"name": "Half Bath",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cp_garage_raw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "garage.csv",
+						"folderPath": "raw",
+						"container": "etl-data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "pid",
+						"type": "String"
+					},
+					{
+						"name": "garage_type",
+						"type": "String"
+					},
+					{
+						"name": "garage_yr_blt",
+						"type": "String"
+					},
+					{
+						"name": "garage_finish",
+						"type": "String"
+					},
+					{
+						"name": "garage_cars",
+						"type": "String"
+					},
+					{
+						"name": "garage_area",
+						"type": "String"
+					},
+					{
+						"name": "garage_qual",
+						"type": "String"
+					},
+					{
+						"name": "garage_cond",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cp_misc_raw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "misc.csv",
+						"folderPath": "raw",
+						"container": "etl-data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "pid",
+						"type": "String"
+					},
+					{
+						"name": "misc_feature",
+						"type": "String"
+					},
+					{
+						"name": "misc_val",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cp_pool_raw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "pool.csv",
+						"folderPath": "raw",
+						"container": "etl-data"
+					},
+					"columnDelimiter": ";",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "pid",
+						"type": "String"
+					},
+					{
+						"name": "pool_area",
+						"type": "String"
+					},
+					{
+						"name": "pool_qc",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cp_saleproperties_raw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "saleproperties.csv",
+						"folderPath": "raw",
+						"container": "etl-data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cp_typequality_raw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "typequality.csv",
+						"folderPath": "raw",
+						"container": "etl-data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/csv_amesproperty')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "AmesProperty.csv",
+						"folderPath": "raw",
+						"container": "etl-data"
+					},
+					"columnDelimiter": ";",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "PID",
+						"type": "String"
+					},
+					{
+						"name": "Lot Frontage",
+						"type": "String"
+					},
+					{
+						"name": "Lot Area",
+						"type": "String"
+					},
+					{
+						"name": "Street",
+						"type": "String"
+					},
+					{
+						"name": "Alley",
+						"type": "String"
+					},
+					{
+						"name": "Lot Shape",
+						"type": "String"
+					},
+					{
+						"name": "Land Contour",
+						"type": "String"
+					},
+					{
+						"name": "Utilities",
+						"type": "String"
+					},
+					{
+						"name": "Lot Config",
+						"type": "String"
+					},
+					{
+						"name": "Land Slope",
+						"type": "String"
+					},
+					{
+						"name": "Neighborhood",
+						"type": "String"
+					},
+					{
+						"name": "Condition 1",
+						"type": "String"
+					},
+					{
+						"name": "Condition 2",
+						"type": "String"
+					},
+					{
+						"name": "Bldg Type",
+						"type": "String"
+					},
+					{
+						"name": "House Style",
+						"type": "String"
+					},
+					{
+						"name": "Overall Qual",
+						"type": "String"
+					},
+					{
+						"name": "Overall Cond",
+						"type": "String"
+					},
+					{
+						"name": "Year Built",
+						"type": "String"
+					},
+					{
+						"name": "Year Remod/Add",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sink_temp')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "dataset_final_temp.csv",
+						"folderPath": "raw",
+						"container": "etl-data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_transformacion_ames')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "PostgreSQL_amesdbtemp",
+								"type": "DatasetReference"
+							},
+							"name": "srcAmesdbtemp"
+						},
+						{
+							"dataset": {
+								"referenceName": "csv_amesproperty",
+								"type": "DatasetReference"
+							},
+							"name": "srcAmesproperty"
+						},
+						{
+							"dataset": {
+								"referenceName": "PostgreSQL_FloorDetail",
+								"type": "DatasetReference"
+							},
+							"name": "srcFloorDetail"
+						},
+						{
+							"dataset": {
+								"referenceName": "cp_garage_raw",
+								"type": "DatasetReference"
+							},
+							"name": "srcGarage"
+						},
+						{
+							"dataset": {
+								"referenceName": "cp_bsmt_raw",
+								"type": "DatasetReference"
+							},
+							"name": "srcBsmt"
+						},
+						{
+							"dataset": {
+								"referenceName": "cp_pool_raw",
+								"type": "DatasetReference"
+							},
+							"name": "srcPool"
+						},
+						{
+							"dataset": {
+								"referenceName": "cp_misc_raw",
+								"type": "DatasetReference"
+							},
+							"name": "srcMisc"
+						},
+						{
+							"dataset": {
+								"referenceName": "PostgreSQL_SaleProperties",
+								"type": "DatasetReference"
+							},
+							"name": "srcSaleproperties"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "sink_temp",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "join1"
+						},
+						{
+							"name": "aggFloorDetail"
+						},
+						{
+							"name": "join2"
+						},
+						{
+							"name": "join3"
+						},
+						{
+							"name": "join4"
+						},
+						{
+							"name": "join5"
+						},
+						{
+							"name": "join6"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "join7"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "derivedColumn3"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          exter_cond as long,",
+						"          exter_qual as long,",
+						"          heating_qc as long,",
+						"          kitchen_qual as long,",
+						"          ms_zoning as long,",
+						"          pid as string,",
+						"          roof_style as string,",
+						"          roof_matl as string,",
+						"          exterior_1st as string,",
+						"          exterior_2nd as string,",
+						"          mas_vnr_type as string,",
+						"          mas_vnr_area as long,",
+						"          foundation as string,",
+						"          heating as string,",
+						"          central_air as boolean,",
+						"          electrical as string,",
+						"          first_flr_sf as long,",
+						"          second_flr_sf as long,",
+						"          low_qual_fin_sf as long,",
+						"          kitchen_abvgr as long,",
+						"          tot_rms_abvgrd as long,",
+						"          functional as string,",
+						"          fireplaces as long,",
+						"          fireplace_qu as string,",
+						"          paved_drive as string,",
+						"          wood_deck_sf as long,",
+						"          open_porch_sf as long,",
+						"          enclosed_porch as long,",
+						"          three_ssn_porch as long,",
+						"          screen_porch as long,",
+						"          fence as string,",
+						"          ms_subclass as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'SELECT\\n    \"Exter Cond\"       AS exter_cond,\\n    \"Exter Qual\"       AS exter_qual,\\n    \"Heating QC\"       AS heating_qc,\\n    \"Kitchen Qual\"     AS kitchen_qual,\\n    \"MS Zoning\"        AS ms_zoning,\\n    CAST(\"pid\" AS TEXT) AS pid,\\n    \"Roof Style\"       AS roof_style,\\n    \"Roof Matl\"        AS roof_matl,\\n    \"Exterior 1st\"     AS exterior_1st,\\n    \"Exterior 2nd\"     AS exterior_2nd,\\n    \"Mas Vnr Type\"     AS mas_vnr_type,\\n    \"Mas Vnr Area\"     AS mas_vnr_area,\\n    \"foundation\"       AS foundation,\\n    \"heating\"          AS heating,\\n    \"Central Air\"      AS central_air,\\n    \"electrical\"       AS electrical,\\n    \"1st Flr SF\"       AS first_flr_sf,\\n    \"2nd Flr SF\"       AS second_flr_sf,\\n    \"Low Qual Fin SF\"  AS low_qual_fin_sf,\\n    \"Kitchen AbvGr\"    AS kitchen_abvgr,\\n    \"TotRms AbvGrd\"    AS tot_rms_abvgrd,\\n    \"functional\"       AS functional,\\n    \"fireplaces\"       AS fireplaces,\\n    \"Fireplace Qu\"     AS fireplace_qu,\\n    \"Paved Drive\"      AS paved_drive,\\n    \"Wood Deck SF\"     AS wood_deck_sf,\\n    \"Open Porch SF\"    AS open_porch_sf,\\n    \"Enclosed Porch\"   AS enclosed_porch,\\n    \"3Ssn Porch\"       AS three_ssn_porch,\\n    \"Screen Porch\"     AS screen_porch,\\n    \"fence\"            AS fence,\\n    \"MS SubClass\"      AS ms_subclass\\nFROM public.amesdbtemp',",
+						"     format: 'query') ~> srcAmesdbtemp",
+						"source(output(",
+						"          PID as string,",
+						"          {Lot Frontage} as string,",
+						"          {Lot Area} as string,",
+						"          Street as string,",
+						"          Alley as string,",
+						"          {Lot Shape} as string,",
+						"          {Land Contour} as string,",
+						"          Utilities as string,",
+						"          {Lot Config} as string,",
+						"          {Land Slope} as string,",
+						"          Neighborhood as string,",
+						"          {Condition 1} as string,",
+						"          {Condition 2} as string,",
+						"          {Bldg Type} as string,",
+						"          {House Style} as string,",
+						"          {Overall Qual} as string,",
+						"          {Overall Cond} as string,",
+						"          {Year Built} as string,",
+						"          {Year Remod/Add} as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> srcAmesproperty",
+						"source(output(",
+						"          pid as string,",
+						"          floor as long,",
+						"          bedrooms as integer,",
+						"          full_bath as integer,",
+						"          half_bath as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'SELECT\\n    CAST(\"pid\" AS TEXT) AS pid,\\n    \"Floor\" AS floor,\\n    \"bedrooms\" AS bedrooms,\\n    \"Full Bath\" AS full_bath,\\n    \"Half Bath\" AS half_bath\\nFROM public.FloorDetail',",
+						"     format: 'query') ~> srcFloorDetail",
+						"source(output(",
+						"          pid as string,",
+						"          garage_type as string,",
+						"          garage_yr_blt as string,",
+						"          garage_finish as string,",
+						"          garage_cars as string,",
+						"          garage_area as string,",
+						"          garage_qual as string,",
+						"          garage_cond as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> srcGarage",
+						"source(output(",
+						"          pid as string,",
+						"          bsmt_qual as string,",
+						"          bsmt_cond as string,",
+						"          bsmt_exposure as string,",
+						"          bsmtfin_type_1 as string,",
+						"          bsmtfin_sf_1 as string,",
+						"          bsmtfin_type_2 as string,",
+						"          bsmtfin_sf_2 as string,",
+						"          bsmt_unf_sf as string,",
+						"          total_bsmt_sf as string,",
+						"          bsmt_full_bath as string,",
+						"          bsmt_half_bath as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> srcBsmt",
+						"source(output(",
+						"          pid as string,",
+						"          pool_area as string,",
+						"          pool_qc as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> srcPool",
+						"source(output(",
+						"          pid as string,",
+						"          misc_feature as string,",
+						"          misc_val as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> srcMisc",
+						"source(output(",
+						"          pid as string,",
+						"          sale_date as timestamp,",
+						"          sale_type as string,",
+						"          sale_condition as string,",
+						"          sale_price as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'SELECT\\n    CAST(\"pid\" AS TEXT) AS pid,\\n    \"Sale Date\"         AS sale_date,\\n    \"Sale Type\"         AS sale_type,\\n    \"Sale Condition\"    AS sale_condition,\\n    \"saleprice\"         AS sale_price\\nFROM public.saleproperty',",
+						"     format: 'query') ~> srcSaleproperties",
+						"srcAmesproperty, derivedColumn1 join(srcAmesdbtemp@pid == srcAmesproperty@PID,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"srcFloorDetail aggregate(groupBy(pid),",
+						"     total_bedrooms = sum(toInteger(bedrooms)),",
+						"          total_full_bath = sum(toInteger(full_bath)),",
+						"          total_half_bath = sum(toInteger(half_bath))) ~> aggFloorDetail",
+						"join1, aggFloorDetail join(srcAmesproperty@PID == aggFloorDetail@pid,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join2",
+						"join2, srcGarage join(srcAmesproperty@PID == srcGarage@pid,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join3",
+						"join3, srcBsmt join(srcAmesproperty@PID == srcBsmt@pid,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join4",
+						"join4, srcPool join(srcAmesproperty@PID == srcPool@pid,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join5",
+						"join5, srcMisc join(srcAmesproperty@PID == srcMisc@pid,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join6",
+						"srcAmesdbtemp derive(Gr_liv_area = toInteger(byName('first_flr_sf')) + toInteger(byName('second_flr_sf')) + toInteger(byName('low_qual_fin_sf'))) ~> derivedColumn1",
+						"join6, derivedColumn2 join(srcAmesproperty@PID == srcSaleproperties@pid,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join7",
+						"srcSaleproperties derive(MoSold = month(sale_date),",
+						"          YrSold = year(sale_date)) ~> derivedColumn2",
+						"derivedColumn3 select(mapColumn(",
+						"          PID = srcAmesproperty@PID,",
+						"          {Lot Frontage},",
+						"          {Lot Area},",
+						"          Street,",
+						"          Alley,",
+						"          {Lot Shape},",
+						"          {Land Contour},",
+						"          Utilities,",
+						"          {Lot Config},",
+						"          {Land Slope},",
+						"          Neighborhood,",
+						"          {Condition 1},",
+						"          {Condition 2},",
+						"          {Bldg Type},",
+						"          {House Style},",
+						"          {Overall Qual},",
+						"          {Overall Cond},",
+						"          {Year Built},",
+						"          {Year Remod/Add},",
+						"          exter_cond,",
+						"          exter_qual,",
+						"          heating_qc,",
+						"          kitchen_qual,",
+						"          ms_zoning,",
+						"          pid = srcAmesdbtemp@pid,",
+						"          roof_style,",
+						"          roof_matl,",
+						"          exterior_1st,",
+						"          exterior_2nd,",
+						"          mas_vnr_type,",
+						"          mas_vnr_area,",
+						"          foundation,",
+						"          heating,",
+						"          central_air,",
+						"          electrical,",
+						"          first_flr_sf,",
+						"          second_flr_sf,",
+						"          low_qual_fin_sf,",
+						"          kitchen_abvgr,",
+						"          tot_rms_abvgrd,",
+						"          functional,",
+						"          fireplaces,",
+						"          fireplace_qu,",
+						"          paved_drive,",
+						"          wood_deck_sf,",
+						"          open_porch_sf,",
+						"          enclosed_porch,",
+						"          three_ssn_porch,",
+						"          screen_porch,",
+						"          fence,",
+						"          ms_subclass,",
+						"          Gr_liv_area,",
+						"          pid = aggFloorDetail@pid,",
+						"          Bedroom = total_bedrooms,",
+						"          FullBath = total_full_bath,",
+						"          HalfBath = total_half_bath,",
+						"          pid = srcGarage@pid,",
+						"          garage_type,",
+						"          garage_yr_blt,",
+						"          garage_finish,",
+						"          garage_cars,",
+						"          garage_area,",
+						"          garage_qual,",
+						"          garage_cond,",
+						"          pid = srcBsmt@pid,",
+						"          bsmt_qual,",
+						"          bsmt_cond,",
+						"          bsmt_exposure,",
+						"          bsmtfin_type_1,",
+						"          bsmtfin_sf_1,",
+						"          bsmtfin_type_2,",
+						"          bsmtfin_sf_2,",
+						"          bsmt_unf_sf,",
+						"          total_bsmt_sf,",
+						"          bsmt_full_bath,",
+						"          bsmt_half_bath,",
+						"          pid = srcPool@pid,",
+						"          pool_area,",
+						"          pool_qc,",
+						"          pid = srcMisc@pid,",
+						"          misc_feature,",
+						"          misc_val,",
+						"          pid = srcSaleproperties@pid,",
+						"          sale_date,",
+						"          sale_type,",
+						"          sale_condition,",
+						"          sale_price,",
+						"          MoSold,",
+						"          YrSold",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"join7 derive(Gr_liv_area = coalesce(first_flr_sf, 0) + coalesce(second_flr_sf, 0) + coalesce(low_qual_fin_sf, 0)) ~> derivedColumn3",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/csv_amesproperty')]",
+				"[concat(variables('factoryId'), '/datasets/cp_garage_raw')]",
+				"[concat(variables('factoryId'), '/datasets/cp_bsmt_raw')]",
+				"[concat(variables('factoryId'), '/datasets/cp_pool_raw')]",
+				"[concat(variables('factoryId'), '/datasets/cp_misc_raw')]",
+				"[concat(variables('factoryId'), '/datasets/sink_temp')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_ingesta_mongodb')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "cp_garage_raw",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "MongoDbAtlasSource",
+								"batchSize": 100
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['PID']['$numberLong']"
+										},
+										"sink": {
+											"name": "pid",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Garage Type']"
+										},
+										"sink": {
+											"name": "garage_type",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Garage Yr Blt']['$numberLong']"
+										},
+										"sink": {
+											"name": "garage_yr_blt",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Garage Finish']"
+										},
+										"sink": {
+											"name": "garage_finish",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Garage Cars']['$numberLong']"
+										},
+										"sink": {
+											"name": "garage_cars",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Garage Area']['$numberLong']"
+										},
+										"sink": {
+											"name": "garage_area",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Garage Qual']"
+										},
+										"sink": {
+											"name": "garage_qual",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Garage Cond']"
+										},
+										"sink": {
+											"name": "garage_cond",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "MongoDB_garage",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "cp_garage_raw",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "cp_pool_raw",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "pool"
+							},
+							{
+								"name": "Destination",
+								"value": "etl-data/raw/pool.csv"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "MongoDbAtlasSource",
+								"batchSize": 100
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['PID']['$numberLong']"
+										},
+										"sink": {
+											"name": "pid",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Pool Area']['$numberLong']"
+										},
+										"sink": {
+											"name": "pool_area",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Pool QC']"
+										},
+										"sink": {
+											"name": "pool_qc",
+											"type": "String"
+										}
+									}
+								],
+								"collectionReference": "",
+								"mapComplexValuesToString": false
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "MongoDB_pool",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "cp_pool_raw",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "cp_bsmt_raw",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "MongoDbAtlasSource",
+								"batchSize": 100
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['PID']['$numberLong']"
+										},
+										"sink": {
+											"name": "pid",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Bsmt Qual']"
+										},
+										"sink": {
+											"name": "bsmt_qual",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Bsmt Cond']"
+										},
+										"sink": {
+											"name": "bsmt_cond",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Bsmt Exposure']"
+										},
+										"sink": {
+											"name": "bsmt_exposure",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['BsmtFin Type 1']"
+										},
+										"sink": {
+											"name": "bsmtfin_type_1",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['BsmtFin SF 1']['$numberLong']"
+										},
+										"sink": {
+											"name": "bsmtfin_sf_1",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['BsmtFin Type 2']"
+										},
+										"sink": {
+											"name": "bsmtfin_type_2",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['BsmtFin SF 2']['$numberLong']"
+										},
+										"sink": {
+											"name": "bsmtfin_sf_2",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Bsmt Unf SF']['$numberLong']"
+										},
+										"sink": {
+											"name": "bsmt_unf_sf",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Total Bsmt SF']['$numberLong']"
+										},
+										"sink": {
+											"name": "total_bsmt_sf",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Bsmt Full Bath']['$numberLong']"
+										},
+										"sink": {
+											"name": "bsmt_full_bath",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Bsmt Half Bath']['$numberLong']"
+										},
+										"sink": {
+											"name": "bsmt_half_bath",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "MongoDB_bsmt",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "cp_bsmt_raw",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "cp_misc_raw",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "MongoDbAtlasSource",
+								"batchSize": 100
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['PID']['$numberLong']"
+										},
+										"sink": {
+											"name": "pid"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Misc Feature']"
+										},
+										"sink": {
+											"name": "misc_feature",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Misc Val']['$numberLong']"
+										},
+										"sink": {
+											"name": "misc_val",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "MongoDB_misc",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "cp_misc_raw",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_transformacion_ames",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"srcAmesdbtemp": {},
+									"srcAmesproperty": {},
+									"srcFloorDetail": {},
+									"srcGarage": {},
+									"srcBsmt": {},
+									"srcPool": {},
+									"srcMisc": {},
+									"srcSaleproperties": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-11-07T02:49:32Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/cp_garage_raw')]",
+				"[concat(variables('factoryId'), '/datasets/cp_pool_raw')]",
+				"[concat(variables('factoryId'), '/datasets/cp_bsmt_raw')]",
+				"[concat(variables('factoryId'), '/datasets/cp_misc_raw')]",
+				"[concat(variables('factoryId'), '/dataflows/df_transformacion_ames')]"
+			]
+		}
+	]
+}
